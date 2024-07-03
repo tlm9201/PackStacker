@@ -1,0 +1,30 @@
+#  List of Minecraft Color Codes
+#  Black (black) §0
+#  Dark Blue (dark_blue) §1
+#  Dark Green (dark_green) §2
+#  Dark Aqua (dark_aqua) §3
+#  Dark Red (dark_red) §4
+#  Dark Purple (dark_purple)
+#  Gold (gold) §6
+#  Gray (gray) §7
+#  Dark Gray (dark_gray) §8
+#  Blue (blue) §9
+#  Green (green) §a
+#  Aqua (aqua) §b
+#  Red (red) §c
+#  Light Purple (light_purple) §d
+#  Yellow (yellow) §e
+#  White (white) §f
+#  Obfuscated §k
+#  Bold §l
+#  Strikethrough §m
+#  Underline §n
+#  Italic §o
+#  Reset §r
+cmd_no_perm: "§cYou don't have the required permission to do this!"
+pack_no_perm: "§cYou don't have the required permission to load pack \"%s\""
+invalid_pack: "§cPack §e\"%s\" §cnot found!"
+player_not_verbose: "§cYou must specify a player to load this pack on!"
+player_not_online: "Player \"%s\" is not online!"
+pack_req_kick: "§cThis server requires you to use a resource pack!"
+pack_failed_load: "Pack \"%s\" failed to load due to reason: \"%s\""
