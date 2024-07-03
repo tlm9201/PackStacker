@@ -7,7 +7,7 @@ PackStacker is a simple resource management plugin intended for "stacking" packs
 Downloads can be found at [releases](https://github.com/tlm9201/PackStacker/releases).
 
 ## Short Guide
-Resource packs are defined through ".pack" files. Navigate to `PackStack/packs/` under your servers plugins folder.
+Resource packs are defined through ".pack" files. Navigate to `PackStacker/packs/` under your servers plugins folder.
 
 To define a pack. Create a file with the extension `.pack`. (i.e `example.pack`)
 Pack files follow yaml syntax. See below for an example `.pack` file.
