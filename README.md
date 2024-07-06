@@ -9,7 +9,8 @@ Downloads can be found at [releases](https://github.com/tlm9201/PackStacker/rele
 ## Short Guide
 Resource packs are defined through ".pack" files. Navigate to `PackStacker/packs/` under your servers plugins folder.
 
-To define a pack. Create a file with the extension `.pack`. (i.e `example.pack`)
+To define a pack, create a file with the extension `.pack` under the `packs` folder. (i.e `example.pack`)
+
 Pack files follow yaml syntax. See below for an example `.pack` file.
 
 ```yaml
@@ -35,8 +36,12 @@ load_on_join: true
 
 ### Commands
 * `/pack` The core PackStacker command.
+* `/pack list` Shows the user running this command the available resource packs.
 * `/pack load <packName>` Loads the specified resource pack on the player running this command. Permission: `pack.load.self`
 * `/pack load <packName> <username>` Loads a resource pack on the specified online player. Permission: `pack.load.others`
+* `/pack unload <packName>` Unloads the specified resource pack on the player running this command. Permission: `pack.unload.self`
+* `/pack unload <packName> <username>` Unloads a resource pack on the specified online player. Permission: `pack.unload.others`
+* `/pack reload <messages | packs | all>` Reloads the specified directory of PackStacker. Permissions: `pack.reload.messages` | `pack.reload.packs` | `pack.reload.all`
 
 ## License
 PackStacker is licensed under the [GNU AFFERO GENERAL PUBLIC LICENSE](https://www.gnu.org/licenses/agpl-3.0.en.html).
