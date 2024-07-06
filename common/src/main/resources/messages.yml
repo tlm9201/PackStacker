@@ -1,0 +1,40 @@
+#  List of Minecraft Color Codes
+#  Black (black) §0
+#  Dark Blue (dark_blue) §1
+#  Dark Green (dark_green) §2
+#  Dark Aqua (dark_aqua) §3
+#  Dark Red (dark_red) §4
+#  Dark Purple (dark_purple)
+#  Gold (gold) §6
+#  Gray (gray) §7
+#  Dark Gray (dark_gray) §8
+#  Blue (blue) §9
+#  Green (green) §a
+#  Aqua (aqua) §b
+#  Red (red) §c
+#  Light Purple (light_purple) §d
+#  Yellow (yellow) §e
+#  White (white) §f
+#  Obfuscated §k
+#  Bold §l
+#  Strikethrough §m
+#  Underline §n
+#  Italic §o
+#  Reset §r
+pack_help: "\n§e§lPackStacker ${version} Help§r\n\n §b/pack load <packName> - load the desired pack on yourself.\n §b/pack load <packName> [player] - load the desired pack on the specified user."
+cmd_no_perm: "§cYou don't have the required permission to do this!"
+pack_no_perm: "§cYou don't have the required permission to load pack \"%s\""
+invalid_pack: "§cPack §e\"%s\" §cnot found!"
+player_not_verbose: "§cYou must specify a player to load this pack on!"
+player_not_online: "Player \"%s\" is not online!"
+pack_req_kick: "§cThis server requires you to use a resource pack!"
+pack_failed_load: "§cPack \"%s\" failed to load due to reason: \"%s\""
+pack_already_loaded: "§cPack \"%s\" is already loaded!"
+pack_successfully_loaded: "§aPack \"%s\" sucessfully loaded!"
+pack_not_loaded: "§cPack \"%s\" is not loaded!"
+pack_accepted: "§aAccepted pack \"%s\" from server"
+available_packs: "\n§eAvailable Packs\n\n§b%s"
+pack_required: "§cPack \"%s\" is required!"
+reload_cfg_msgs: "§aReloaded messages!"
+reload_cfg_packs: "§aReloaded cached resource packs!"
+reload_cfg_all: "§aReloaded PackStacker ${version}!"

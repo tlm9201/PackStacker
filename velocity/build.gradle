@@ -1,0 +1,21 @@
+repositories {
+    maven { url 'https://repo.papermc.io/repository/maven-public/' }
+}
+
+dependencies {
+    implementation project(':common')
+    compileOnly 'com.velocitypowered:velocity-api:3.1.1'
+    annotationProcessor 'com.velocitypowered:velocity-api:3.1.1'
+    compileOnly 'net.kyori:adventure-text-minimessage:4.17.0'
+    compileOnly 'net.kyori:text-api:3.0.4'
+}
+
+processResources {
+    filesMatching('BuildConstants.java') {
+        expand 'version': project.ext.version
+    }
+}
+
+shadowJar {
+    archiveFileName = "PackStacker-Velocity-${project.ext.version}.jar"
+}

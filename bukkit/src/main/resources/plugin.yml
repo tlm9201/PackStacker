@@ -1,0 +1,37 @@
+name: PackStacker
+version: ${version}
+author: tlm920
+main: com.timomcgrath.packstacker.PackStacker
+api-version: '1.20'
+commands:
+  pack:
+    usage: '/pack'
+    description: 'Core command to load and manage resource packs.'
+    aliases:
+      - resourcepack
+      - packstacker
+permissions:
+  pack.load.self:
+    description: User is able to run /pack load
+    default: true
+  pack.load.others:
+    description: User is able to run /pack load on other players
+    default: false
+  pack.unload.self:
+    description: User is able to run /pack unload
+    default: true
+  pack.unload.others:
+    description: User is able to run /pack unload on other players
+    default: false
+  pack.reload.messages:
+    description: User is able to reload PackStacker's messages
+    default: false
+  pack.reload.packs:
+    description: User is able to reload PackStacker's cached resource packs
+    default: false
+  pack.reload.all:
+    description: User is able to reload PackStacker
+    default: false
+  pack.bypass:
+    description: User is able to bypass 'required' resourcepacks.
+    default: false

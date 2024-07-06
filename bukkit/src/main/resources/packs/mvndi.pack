@@ -1,0 +1,7 @@
+name: "MvndiPack"
+url: "https://github.com/HydrolienF/MvndiPack/releases/download/1.20.6.425/MvndiPack.zip"
+hash: "D64DCFA57B5A94383FA39F32BE3B6D38D853304C"
+priority: 0
+required: true
+prompt: "Hello <rainbow>world</rainbow>, isn't <underlined>MiniMessage</underlined> fun?\nHello <rainbow>world</rainbow>, isn't <underlined>MiniMessage</underlined> fun?"
+load_on_join: true

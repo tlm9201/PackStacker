@@ -1,0 +1,17 @@
+dependencies {
+    implementation 'net.kyori:adventure-api:4.17.0'
+    implementation 'net.kyori:adventure-text-minimessage:4.17.0'
+    implementation 'net.kyori:text-api:3.0.4'
+    implementation 'net.kyori:adventure-text-serializer-legacy:4.17.0'
+    implementation 'ninja.leaping.configurate:configurate-core:3.7.1'
+    implementation 'ninja.leaping.configurate:configurate-hocon:3.7.1'
+    implementation 'ninja.leaping.configurate:configurate-yaml:3.7.1'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+}
+
+processResources {
+    filesMatching('messages.yml') {
+        expand 'version': project.ext.version
+    }
+}
+

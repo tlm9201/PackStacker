@@ -1,1 +1,2 @@
 rootProject.name = 'PackStacker'
+include ('bukkit', 'velocity', 'common')

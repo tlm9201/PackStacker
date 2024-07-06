@@ -1,0 +1,7 @@
+name: "MvndiSoundscapes"
+url: "https://tmpfiles.org/8781579/mvndisoundscapes.zip"
+hash: "1e31900f57ddf67723a92fa9df4d86c65c3515b1"
+priority: 1
+required: true
+prompt: "2"
+load_on_join: true
