@@ -65,7 +65,7 @@ public class PackStackerUtil {
             return;
 
         packs.forEach(pack -> packInfos.add(pack.getPackInfo()));
-        AbstractResourcePack first = packs.getFirst();
+        AbstractResourcePack first = packs.get(0);
 
         ResourcePackRequest request = ResourcePackRequest.resourcePackRequest()
                 .packs(packInfos).prompt(first.getPrompt())
@@ -93,7 +93,7 @@ public class PackStackerUtil {
      */
     public static AbstractResourcePack mostPriority(List<AbstractResourcePack> packs) {
         packs.sort(new PackComparator());
-        return packs.getFirst();
+        return packs.get(0);
     }
 
     public static class PackComparator implements Comparator<AbstractResourcePack> {

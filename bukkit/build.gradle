@@ -25,3 +25,6 @@ processResources {
 shadowJar {
     archiveFileName = "PackStacker-Bukkit-${project.ext.version}.jar"
 }
+
+java.sourceCompatibility = 17
+java.targetCompatibility = 21
