@@ -16,7 +16,7 @@ subprojects {
     apply plugin: 'com.github.johnrengelman.shadow'
 
     group = 'com.timomcgrath.packstacker'
-    version = '1.0.1'
+    version = '1.0.3'
 
     sourceCompatibility = 17
     targetCompatibility = 17

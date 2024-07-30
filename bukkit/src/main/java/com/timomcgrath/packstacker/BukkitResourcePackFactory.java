@@ -41,6 +41,6 @@ public class BukkitResourcePackFactory implements ResourcePackFactory {
     if (promptStr != null)
       prompt = MiniMessage.miniMessage().deserialize(promptStr);
 
-    return new ResourcePack(name, hash, prompt, url, priority, isRequired, loadOnJoin);
+    return new ResourcePack(PackStacker.getPlugin(), name, hash, prompt, url, priority, isRequired, loadOnJoin);
   }
 }

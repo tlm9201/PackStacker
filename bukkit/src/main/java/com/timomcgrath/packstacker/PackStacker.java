@@ -74,7 +74,7 @@ public final class PackStacker extends JavaPlugin implements PackPlugin {
     @Override
     public boolean hasPermission(Audience audience, String permission) {
         if (!(audience instanceof Player player))
-            return false;
+            return true;
 
         return player.hasPermission(permission);
     }

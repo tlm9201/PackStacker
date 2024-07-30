@@ -27,8 +27,8 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 public class ResourcePack extends AbstractResourcePack {
-    public ResourcePack(String name, String hash, Component prompt, String url, byte priority, boolean isRequired, boolean loadOnJoin) {
-        super(name, hash, prompt, url, priority, isRequired, loadOnJoin);
+    public ResourcePack(PackPlugin plugin, String name, String hash, Component prompt, String url, byte priority, boolean isRequired, boolean loadOnJoin) {
+        super(name, hash, prompt, url, priority, isRequired, loadOnJoin, plugin);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class ResourcePack extends AbstractResourcePack {
             case FAILED_RELOAD:
             case FAILED_DOWNLOAD:
                 audience.sendMessage(Messaging.get("pack_failed_load", pack.getName(), status.name()));
-                if (pack.isRequired())
+                if (pack.isRequired() && !player.hasPermission("pack.bypass"))
                     player.kick(Messaging.get("pack_req_kick"));
         }
     }

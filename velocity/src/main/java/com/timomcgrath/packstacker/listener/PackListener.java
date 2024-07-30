@@ -32,6 +32,7 @@ public class PackListener {
     @Subscribe
     public void onPlayerJoin(ServerPostConnectEvent event) {
         Player player = event.getPlayer();
+
         PackStackerUtil.loadMultiple(player, player.getUniqueId(), PackStackerUtil.getPacksToLoadOnJoin());
     }
 
@@ -62,7 +63,7 @@ public class PackListener {
             case FAILED_DOWNLOAD:
             case DECLINED:
                 Messaging.sendMsg(player, "pack_failed_load", pack.getName(), status.name());
-                if (pack.isRequired())
+                if (pack.isRequired() && !player.hasPermission("pack.bypass"))
                     player.disconnect(Messaging.get("pack_req_kick"));
         }
     }

@@ -86,6 +86,10 @@ public class PackStacker implements PackPlugin {
         return instance;
     }
 
+    public Logger getLogger() {
+        return logger;
+    }
+
     @Override
     public void reloadMessages() {
         FileLoader fileLoader = new FileLoader(dataDirectory);
@@ -108,7 +112,7 @@ public class PackStacker implements PackPlugin {
     @Override
     public boolean hasPermission(Audience audience, String permission) {
         if (!(audience instanceof Player player))
-            return false;
+            return true;
 
         return player.hasPermission(permission);
     }

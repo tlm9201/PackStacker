@@ -36,8 +36,10 @@ public abstract class AbstractResourcePack {
     private final byte priority;
     private final boolean isRequired, loadOnJoin;
     private final ResourcePackInfo packInfo;
+    private final PackPlugin plugin;
 
-    public AbstractResourcePack(String name, String hash, Component prompt, String url, byte priority, boolean isRequired, boolean loadOnJoin) {
+    public AbstractResourcePack(String name, String hash, Component prompt, String url, byte priority, boolean isRequired, boolean loadOnJoin, PackPlugin plugin) {
+        this.plugin = plugin;
         UUID uuid = UUID.randomUUID();
         this.name = name;
         this.hash = hash.toLowerCase();
@@ -61,14 +63,13 @@ public abstract class AbstractResourcePack {
         ResourcePackRequest request = ResourcePackRequest.resourcePackRequest()
                 .packs(packInfo)
                 .prompt(prompt)
-                .required(isRequired)
                 .build().callback((packId, status, aud) -> packCallback(packId, status, aud, playerId));
         audience.sendResourcePacks(request);
         request.callback();
     }
 
     public void unload(@NotNull Audience audience, UUID playerId) {
-        if (isRequired) {
+        if (isRequired && !plugin.hasPermission(audience, "pack.bypass")) {
             Messaging.sendMsg(audience, "pack_required", name);
             return;
         }

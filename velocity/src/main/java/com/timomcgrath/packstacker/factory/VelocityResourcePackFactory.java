@@ -19,6 +19,7 @@
 package com.timomcgrath.packstacker.factory;
 
 import com.timomcgrath.packstacker.AbstractResourcePack;
+import com.timomcgrath.packstacker.PackStacker;
 import com.timomcgrath.packstacker.ResourcePack;
 import com.timomcgrath.packstacker.ResourcePackFactory;
 import net.kyori.adventure.text.Component;
@@ -44,6 +45,6 @@ public class VelocityResourcePackFactory implements ResourcePackFactory {
         if (promptStr != null)
             prompt = MiniMessage.miniMessage().deserialize(promptStr);
 
-        return new ResourcePack(name, hash, prompt, url, priority, isRequired, loadOnJoin);
+        return new ResourcePack(PackStacker.getInstance(), name, hash, prompt, url, priority, isRequired, loadOnJoin);
     }
 }

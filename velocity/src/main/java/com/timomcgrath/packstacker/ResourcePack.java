@@ -27,8 +27,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class ResourcePack extends AbstractResourcePack {
-    public ResourcePack(String name, String hash, Component prompt, String url, byte priority, boolean isRequired, boolean loadOnJoin) {
-        super(name, hash, prompt, url, priority, isRequired, loadOnJoin);
+    public ResourcePack(PackPlugin plugin, String name, String hash, Component prompt, String url, byte priority, boolean isRequired, boolean loadOnJoin) {
+        super(name, hash, prompt, url, priority, isRequired, loadOnJoin, plugin);
     }
 
     @Override
@@ -55,6 +55,11 @@ public class ResourcePack extends AbstractResourcePack {
             case FAILED_RELOAD:
             case FAILED_DOWNLOAD:
                 audience.sendMessage(Messaging.get("pack_failed_load", pack.getName(), status.name()));
+                PackStacker.getInstance().getLogger().info(player.getUniqueId() + " " + player.hasPermission("pack.bypass"));
+
+                if (player.hasPermission("pack.bypass"))
+                    break;
+
                 if (pack.isRequired())
                     player.disconnect(Messaging.get("pack_req_kick"));
         }
