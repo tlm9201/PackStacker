@@ -40,6 +40,9 @@ public class ResourcePack extends AbstractResourcePack {
             return;
 
         AbstractResourcePack pack = PackCache.getInstance().get(packId);
+        if (pack == null)
+            return;
+
         switch (status) {
             case SUCCESSFULLY_LOADED:
                 packPlayer.addPack(pack);

@@ -52,6 +52,9 @@ public class PackListener {
         PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(player.getUniqueId());
         PlayerResourcePackStatusEvent.Status status = event.getStatus();
 
+        if (pack == null)
+            return;
+
         switch (status) {
             case SUCCESSFUL:
                 packPlayer.addPack(pack);
