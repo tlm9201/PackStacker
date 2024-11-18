@@ -29,13 +29,14 @@ import java.net.URI;
 import java.util.UUID;
 
 public abstract class AbstractResourcePack {
-    private final String hash;
+    private String hash;
     private UUID uuid;
-    private final String name, url;
+    private final String name;
+    private String url;
     private final Component prompt;
     private final byte priority;
     private final boolean isRequired, loadOnJoin;
-    private final ResourcePackInfo packInfo;
+    private ResourcePackInfo packInfo;
     private final PackPlugin plugin;
 
     public AbstractResourcePack(String name, String hash, Component prompt, String url, byte priority, boolean isRequired, boolean loadOnJoin, PackPlugin plugin) {
@@ -49,7 +50,7 @@ public abstract class AbstractResourcePack {
         this.priority = priority;
         this.isRequired = isRequired;
         this.loadOnJoin = loadOnJoin;
-        this.packInfo = ResourcePackInfo.resourcePackInfo(uuid, URI.create(url), hash);
+        reloadPackInfo();
     }
 
     public void load(@NotNull Audience audience, UUID playerId) {
@@ -81,8 +82,14 @@ public abstract class AbstractResourcePack {
 
     public abstract void packCallback(UUID packId, ResourcePackStatus status, Audience audience, UUID playerId);
 
+    public abstract void reload(UUID uuid);
+
     public String getHash() {
         return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 
     public UUID getUuid() {
@@ -99,6 +106,10 @@ public abstract class AbstractResourcePack {
 
     public String getUrl() {
         return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public byte getPriority() {
@@ -119,5 +130,9 @@ public abstract class AbstractResourcePack {
 
     public ResourcePackInfo getPackInfo() {
         return packInfo;
+    }
+
+    public void reloadPackInfo() {
+        this.packInfo = ResourcePackInfo.resourcePackInfo(uuid, URI.create(url), hash);
     }
 }

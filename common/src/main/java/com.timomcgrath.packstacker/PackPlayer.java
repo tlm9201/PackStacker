@@ -23,6 +23,7 @@ import java.util.*;
 public class PackPlayer {
     private final UUID uuid;
     private final Map<String, AbstractResourcePack> activePacks = new HashMap<>();
+    private final List<AbstractResourcePack> sortedPacks = new ArrayList<>();
     private boolean passedVerification = true;
 
     public PackPlayer(UUID uuid) {
@@ -43,10 +44,12 @@ public class PackPlayer {
 
     public void addPack(AbstractResourcePack pack) {
         activePacks.put(pack.getName().toLowerCase(), pack);
+        sortedPacks.add(pack);
     }
 
     public void removePack(AbstractResourcePack pack) {
       activePacks.remove(pack.getName().toLowerCase());
+      sortedPacks.remove(pack);
     }
 
     public boolean hasPack(AbstractResourcePack pack) {
@@ -55,5 +58,17 @@ public class PackPlayer {
 
     public AbstractResourcePack getPack(String packName) {
         return activePacks.get(packName);
+    }
+
+    public List<AbstractResourcePack> getActivePacks() {
+        return sortedPacks;
+    }
+
+    public Set<UUID> getActivePackIds() {
+        Set<UUID> uuids = new HashSet<>();
+        activePacks.values().forEach(pack -> {
+            uuids.add(pack.getUuid());
+        });
+        return uuids;
     }
 }

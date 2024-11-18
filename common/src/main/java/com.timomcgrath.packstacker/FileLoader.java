@@ -18,7 +18,9 @@
 
 package com.timomcgrath.packstacker;
 
+import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.jetbrains.annotations.NotNull;
 
@@ -96,5 +98,34 @@ public class FileLoader {
         });
 
         return packList;
+    }
+
+    public void updatePackFile(AbstractResourcePack pack) {
+        File file = new File(packsDirectory.toFile(), pack.getName().toLowerCase() + ".pack");
+        if (file.exists()) {
+            try {
+                YAMLConfigurationLoader loader = YAMLConfigurationLoader.builder().setFile(file).build();
+                ConfigurationNode config = loader.load();
+                config.getNode("url").setValue(TypeToken.of(String.class), pack.getUrl());
+                config.getNode("hash").setValue(TypeToken.of(String.class), pack.getHash());
+                loader.save(config);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ObjectMappingException ignored) {
+            }
+        }
+    }
+
+    public void loadSettings() {
+        Path settings = dataDirectory.resolve("config.yml");
+        try {
+            if (Files.notExists(settings))
+                Files.copy(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("config.yml")), settings);
+            YAMLConfigurationLoader loader = YAMLConfigurationLoader.builder().setPath(settings).build();
+            ConfigurationNode root = loader.load();
+            PackSettings.get().init(root);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

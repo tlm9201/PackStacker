@@ -52,7 +52,7 @@ public class PackStackerUtil {
      * @param playerId
      * @param packs
      */
-    public static void loadMultiple(Audience audience, UUID playerId, List<AbstractResourcePack> packs) {
+    public static void loadMultiple(Audience audience, UUID playerId, List<AbstractResourcePack> packs, boolean replace) {
         if (packs.isEmpty())
             return;
 
@@ -69,7 +69,7 @@ public class PackStackerUtil {
 
         ResourcePackRequest request = ResourcePackRequest.resourcePackRequest()
                 .packs(packInfos).prompt(first.getPrompt())
-                .build().callback((uuid, status, aud) -> first.packCallback(uuid, status, aud, playerId));
+                .build().replace(replace).callback((uuid, status, aud) -> first.packCallback(uuid, status, aud, playerId));
         audience.sendResourcePacks(request);
     }
 

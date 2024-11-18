@@ -26,6 +26,7 @@ public interface PackPlugin {
     void reloadMessages();
     void reloadPacks();
     void reloadAll();
+    void reloadPlayers();
     boolean hasPermission(Audience audience, String permission);
 
     default boolean hasAnyPermission(Audience audience, String... permissions) {
@@ -38,4 +39,16 @@ public interface PackPlugin {
     }
 
     List<String> getOnlinePlayers();
+
+    default int getWebhookPort() {
+        return 3434;
+    }
+
+    /**
+     * Called when a pack changes from a github release webhook event
+     * @param pack the affected pack
+     */
+    void invokeGithubRelease(AbstractResourcePack pack);
+
+    void log(String string);
 }

@@ -28,7 +28,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 public abstract class AbstractPackCommand {
-    static final List<String> packTabCompletes = Arrays.asList("load", "unload", "list", "reload");
+    static final List<String> packTabCompletes = Arrays.asList("load", "unload", "list", "reload", "update");
     static final List<String> packReloadTabCompletes = Arrays.asList("messages", "packs", "all");
     protected final PackPlugin plugin;
 
@@ -61,7 +61,7 @@ public abstract class AbstractPackCommand {
                     }
                 }
             }
-            case "list" -> {
+            case "list", "update" -> {
                 if (args.length == 2)
                     return filterByStart(PackCache.getInstance().getPackNames(), args[1]);
             }
@@ -102,6 +102,10 @@ public abstract class AbstractPackCommand {
                     return;
                 }
             }
+            case "update" -> {
+                parseUpdateCommand(sender, remFirstArg(args));
+                return;
+            }
             case "list" -> {
                 parseListCommand(sender, remFirstArg(args));
                 return;
@@ -113,6 +117,8 @@ public abstract class AbstractPackCommand {
         }
         Messaging.sendMsg(sender, "cmd_no_perm");
     }
+
+    protected abstract void parseUpdateCommand(Audience sender, String[] args);
 
     protected abstract void parseLoadCommand(Audience sender, String[] args);
 

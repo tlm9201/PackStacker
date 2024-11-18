@@ -51,6 +51,13 @@ public class PackCache {
         packHashMap.put(pack.getHash(), uuid);
     }
 
+    public void remove(String packName) {
+        AbstractResourcePack pack = get(packName);
+        packMap.remove(pack.getUuid());
+        packNameMap.remove(packName);
+        packHashMap.remove(pack.getHash());
+    }
+
     public void addAll(Collection<AbstractResourcePack> packs) {
         packs.forEach(this::add);
     }
@@ -78,5 +85,8 @@ public class PackCache {
 
     public AbstractResourcePack get(String name) {
         return get(packNameMap.get(name));
+    }
+    public boolean exists(String packname) {
+        return packNameMap.containsKey(packname);
     }
 }

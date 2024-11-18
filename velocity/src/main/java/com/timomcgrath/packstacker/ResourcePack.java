@@ -20,6 +20,7 @@ package com.timomcgrath.packstacker;
 
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.resource.ResourcePackRequest;
 import net.kyori.adventure.resource.ResourcePackStatus;
 import net.kyori.adventure.text.Component;
 
@@ -63,5 +64,48 @@ public class ResourcePack extends AbstractResourcePack {
                 if (pack.isRequired())
                     player.disconnect(Messaging.get("pack_req_kick"));
         }
+    }
+
+    public void packCallbackRemove(UUID packId, ResourcePackStatus status, Audience audience, UUID playerId, ResourcePackRequest toApplyAfter) {
+        Optional<Player> playerOpt = PackStacker.getInstance().getServer().getPlayer(playerId);
+        if (playerOpt.isEmpty())
+            return;
+
+        Player player = playerOpt.get();
+        PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(player.getUniqueId());
+        AbstractResourcePack pack = PackCache.getInstance().get(packId);
+
+        switch (status) {
+            case SUCCESSFULLY_LOADED:
+                player.sendResourcePacks(toApplyAfter);
+                break;
+            case ACCEPTED:
+                break;
+            case DECLINED:
+            case DISCARDED:
+            case INVALID_URL:
+            case FAILED_RELOAD:
+            case FAILED_DOWNLOAD:
+        }
+    }
+
+    @Override
+    public void reload(UUID player) {
+        PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(player);
+        Player player1 = PackStacker.getInstance().getServer().getPlayer(player).get();
+
+        ResourcePackRequest request0 = ResourcePackRequest.resourcePackRequest()
+                .packs(getPackInfo())
+                .prompt(getPrompt())
+                .replace(true)
+                .build().callback((packId, status, aud) -> packCallback(packId, status, aud, player));
+
+        ResourcePackRequest request = ResourcePackRequest.resourcePackRequest()
+                .packs(getPackInfo())
+                .prompt(getPrompt())
+                .replace(true)
+                .build().callback((packId, status, aud) -> packCallbackRemove(packId, status, aud, player, request0));
+        player1.removeResourcePacks(request);
+        player1.sendResourcePacks(request0);
     }
 }

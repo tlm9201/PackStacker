@@ -33,7 +33,7 @@ public class PackListener implements Listener {
     Player player = event.getPlayer();
     PlayerPackCache.getInstance().initPlayer(player.getUniqueId());
 
-    PackStackerUtil.loadMultiple(player, player.getUniqueId(), PackStackerUtil.getPacksToLoadOnJoin());
+    PackStackerUtil.loadMultiple(player, player.getUniqueId(), PackStackerUtil.getPacksToLoadOnJoin(), false);
   }
 
   @EventHandler

@@ -1,0 +1,3 @@
+github-endpoint:
+  enabled: false
+  port: 25535

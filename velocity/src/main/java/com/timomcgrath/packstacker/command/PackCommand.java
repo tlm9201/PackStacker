@@ -34,6 +34,19 @@ public class PackCommand extends AbstractPackCommand implements SimpleCommand {
     }
 
     @Override
+    protected void parseUpdateCommand(Audience sender, String[] args) {
+        PackPlayer player = PlayerPackCache.getInstance().getPlayer(((Player) sender).getUniqueId());
+
+        String pack = args[0];
+        if (player.getPack(pack) == null) {
+            Messaging.sendMsg(sender, "invalid_pack", pack);
+            return;
+        }
+
+        player.getPack(pack).reload(player.getUUID());
+    }
+
+    @Override
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();

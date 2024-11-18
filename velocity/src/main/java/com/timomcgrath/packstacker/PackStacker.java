@@ -32,6 +32,9 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -49,6 +52,7 @@ public class PackStacker implements PackPlugin {
     private final ProxyServer server;
     private final Logger logger;
     private final Path dataDirectory;
+    private GithubEndpoint githubEndpoint;
 
     @Inject
     public PackStacker(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
@@ -62,6 +66,8 @@ public class PackStacker implements PackPlugin {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        reloadAll();
+
         FileLoader fileLoader = new FileLoader(dataDirectory);
         fileLoader.loadMessages();
         fileLoader.loadPacks(new VelocityResourcePackFactory());
@@ -76,6 +82,11 @@ public class PackStacker implements PackPlugin {
 
         SimpleCommand packCommand = new PackCommand(this);
         commandManager.register(commandMeta, packCommand);
+
+        if (PackSettings.get().githubEnabled) {
+            this.githubEndpoint = new GithubEndpoint(this);
+            githubEndpoint.init();
+        }
     }
 
     public ProxyServer getServer() {
@@ -106,7 +117,17 @@ public class PackStacker implements PackPlugin {
     public void reloadAll() {
         FileLoader fileLoader = new FileLoader(dataDirectory);
         fileLoader.loadMessages();
+        fileLoader.loadSettings();
         fileLoader.loadPacks(new VelocityResourcePackFactory());
+        reloadPlayers();
+    }
+
+    @Override
+    public void reloadPlayers() {
+        server.getAllPlayers().forEach(player -> {
+            PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(player.getUniqueId());
+            PackStackerUtil.loadMultiple(player, player.getUniqueId(), packPlayer.getActivePacks(), true);
+        });
     }
 
     @Override
@@ -120,5 +141,28 @@ public class PackStacker implements PackPlugin {
     @Override
     public List<String> getOnlinePlayers() {
         return server.getAllPlayers().parallelStream().map(player -> player.getUsername().toLowerCase()).collect(Collectors.toList());
+    }
+
+    @Override
+    public void invokeGithubRelease(AbstractResourcePack pack) {
+        FileLoader fileLoader = new FileLoader(dataDirectory);
+        fileLoader.updatePackFile(pack);
+
+        server.getAllPlayers().forEach(player -> {
+            PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(player.getUniqueId());
+            if (packPlayer.hasPack(pack)) {
+                sendPackUpdateNotification(player, pack);
+            }
+        });
+    }
+
+    private void sendPackUpdateNotification(Player player, AbstractResourcePack pack) {
+        player.sendMessage(Messaging.get("pack_updated", pack.getName()));
+        player.sendMessage(Messaging.get("pack_updated_click").clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/pack update " + pack.getName())));
+    }
+
+    @Override
+    public void log(String string) {
+        logger.info(string);
     }
 }

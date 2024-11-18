@@ -33,7 +33,7 @@ public class PackListener {
     public void onPlayerJoin(ServerPostConnectEvent event) {
         Player player = event.getPlayer();
 
-        PackStackerUtil.loadMultiple(player, player.getUniqueId(), PackStackerUtil.getPacksToLoadOnJoin());
+        PackStackerUtil.loadMultiple(player, player.getUniqueId(), PackStackerUtil.getPacksToLoadOnJoin(), false);
     }
 
     @Subscribe

@@ -35,6 +35,7 @@ public final class PackStacker extends JavaPlugin implements PackPlugin {
     private static PackStacker plugin;
     private final File packDataFolder = new File(getDataFolder(), "packs");
     private File messagesFile = new File(getDataFolder(), "messages.yml");
+    private GithubEndpoint githubEndpoint;
 
     public PackStacker() {
         plugin = this;
@@ -46,6 +47,11 @@ public final class PackStacker extends JavaPlugin implements PackPlugin {
 
         getCommand("pack").setExecutor(new PackCommand(this));
         Bukkit.getPluginManager().registerEvents(new PackListener(), this);
+
+        if (PackSettings.get().githubEnabled) {
+            this.githubEndpoint = new GithubEndpoint(this);
+            githubEndpoint.init();
+        }
     }
 
     @Override
@@ -62,6 +68,15 @@ public final class PackStacker extends JavaPlugin implements PackPlugin {
     public void reloadPacks() {
         FileLoader fileLoader = new FileLoader(getDataFolder().toPath());
         fileLoader.loadPacks(new BukkitResourcePackFactory());
+        reloadPlayers();
+    }
+
+    @Override
+    public void reloadPlayers() {
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(player.getUniqueId());
+            PackStackerUtil.loadMultiple(player, player.getUniqueId(), packPlayer.getActivePacks(), true);
+        });
     }
 
     @Override
@@ -69,6 +84,7 @@ public final class PackStacker extends JavaPlugin implements PackPlugin {
         FileLoader fileLoader = new FileLoader(getDataFolder().toPath());
         fileLoader.loadMessages();
         fileLoader.loadPacks(new BukkitResourcePackFactory());
+        fileLoader.loadSettings();
     }
 
     @Override
@@ -82,6 +98,17 @@ public final class PackStacker extends JavaPlugin implements PackPlugin {
     @Override
     public List<String> getOnlinePlayers() {
         return Bukkit.getOnlinePlayers().parallelStream().map(player -> player.getName().toLowerCase()).collect(Collectors.toList());
+    }
+
+    @Override
+    public void invokeGithubRelease(AbstractResourcePack pack) {
+        FileLoader fileLoader = new FileLoader(getDataFolder().toPath());
+        fileLoader.updatePackFile(pack);
+    }
+
+    @Override
+    public void log(String string) {
+        getLogger().info(string);
     }
 
     @NotNull

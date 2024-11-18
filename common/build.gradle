@@ -7,6 +7,8 @@ dependencies {
     implementation 'ninja.leaping.configurate:configurate-hocon:3.7.1'
     implementation 'ninja.leaping.configurate:configurate-yaml:3.7.1'
     implementation 'org.apache.commons:commons-lang3:3.14.0'
+    implementation 'io.javalin:javalin:6.3.0'
+    implementation 'org.json:json:20240303'
 }
 
 processResources {
