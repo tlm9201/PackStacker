@@ -25,6 +25,7 @@ public class PackPlayer {
     private final Map<String, AbstractResourcePack> activePacks = new HashMap<>();
     private final List<AbstractResourcePack> sortedPacks = new ArrayList<>();
     private boolean passedVerification = true;
+    private int joinPackRetries = 0;
 
     public PackPlayer(UUID uuid) {
         this.uuid = uuid;
@@ -62,6 +63,18 @@ public class PackPlayer {
 
     public List<AbstractResourcePack> getActivePacks() {
         return sortedPacks;
+    }
+
+    public int getJoinPackRetries() {
+        return joinPackRetries;
+    }
+
+    public void incrementJoinPackRetries() {
+        joinPackRetries++;
+    }
+
+    public void resetJoinPackRetries() {
+        joinPackRetries = 0;
     }
 
     public Set<UUID> getActivePackIds() {

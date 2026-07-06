@@ -48,6 +48,28 @@ public class PackCommand extends AbstractPackCommand implements CommandExecutor,
   }
 
   @Override
+  protected void parseUpdateCommand(Audience sender, String[] args) {
+    if (!(sender instanceof Player player)) {
+      Messaging.sendMsg(sender, "player_not_verbose");
+      return;
+    }
+
+    if (args.length == 0) {
+      Messaging.sendMsg(sender, "pack_help");
+      return;
+    }
+
+    PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(player.getUniqueId());
+    AbstractResourcePack pack = packPlayer.getPack(args[0].toLowerCase());
+    if (pack == null) {
+      Messaging.sendMsg(sender, "invalid_pack", args[0]);
+      return;
+    }
+
+    pack.reload(player.getUniqueId());
+  }
+
+  @Override
   protected void parseLoadCommand(Audience sender, String[] args) {
     if (args.length == 0) {
       Messaging.sendMsg(sender, "pack_help");

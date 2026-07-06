@@ -41,6 +41,8 @@ public class ResourcePack extends AbstractResourcePack {
         Player player = playerOpt.get();
         PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(player.getUniqueId());
         AbstractResourcePack pack = PackCache.getInstance().get(packId);
+        if (pack == null)
+            return;
 
         switch (status) {
             case SUCCESSFULLY_LOADED:
@@ -94,16 +96,24 @@ public class ResourcePack extends AbstractResourcePack {
         PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(player);
         Player player1 = PackStacker.getInstance().getServer().getPlayer(player).get();
 
-        ResourcePackRequest request0 = ResourcePackRequest.resourcePackRequest()
+        ResourcePackRequest.Builder request0Builder = ResourcePackRequest.resourcePackRequest()
                 .packs(getPackInfo())
                 .prompt(getPrompt())
-                .replace(true)
+                .replace(true);
+        if (isRequired())
+            request0Builder.required(true);
+
+        ResourcePackRequest request0 = request0Builder
                 .build().callback((packId, status, aud) -> packCallback(packId, status, aud, player));
 
-        ResourcePackRequest request = ResourcePackRequest.resourcePackRequest()
+        ResourcePackRequest.Builder requestBuilder = ResourcePackRequest.resourcePackRequest()
                 .packs(getPackInfo())
                 .prompt(getPrompt())
-                .replace(true)
+                .replace(true);
+        if (isRequired())
+            requestBuilder.required(true);
+
+        ResourcePackRequest request = requestBuilder
                 .build().callback((packId, status, aud) -> packCallbackRemove(packId, status, aud, player, request0));
         player1.removeResourcePacks(request);
         player1.sendResourcePacks(request0);

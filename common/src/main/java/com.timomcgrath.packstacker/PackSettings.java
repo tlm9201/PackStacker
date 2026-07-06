@@ -20,15 +20,40 @@ package com.timomcgrath.packstacker;
 
 import ninja.leaping.configurate.ConfigurationNode;
 
+import java.util.Locale;
+
 public class PackSettings {
     private static PackSettings instance;
     public int githubPort = 3434;
     public boolean githubEnabled = false;
+    public int joinDelayMs = 1000;
+    public boolean joinReplace = true;
+    public int joinMaxRetries = 2;
+    public BackendJoinLoading backendJoinLoading = BackendJoinLoading.AUTO;
+
+    public enum BackendJoinLoading {
+        AUTO,
+        ENABLED,
+        DISABLED
+    }
 
     public void init(ConfigurationNode root) {
         ConfigurationNode github = root.getNode("github-endpoint");
         this.githubEnabled = github.getNode("enabled").getBoolean();
         this.githubPort = github.getNode("port").getInt();
+
+        ConfigurationNode joinPacks = root.getNode("join-packs");
+        this.joinDelayMs = joinPacks.getNode("delay-ms").getInt(joinDelayMs);
+        this.joinReplace = joinPacks.getNode("replace").getBoolean(joinReplace);
+        this.joinMaxRetries = joinPacks.getNode("max-retries").getInt(joinMaxRetries);
+        String backendLoading = joinPacks.getNode("backend-loading").getString("auto");
+        if (backendLoading != null) {
+            try {
+                this.backendJoinLoading = BackendJoinLoading.valueOf(backendLoading.toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException ignored) {
+                this.backendJoinLoading = BackendJoinLoading.AUTO;
+            }
+        }
     }
     public static PackSettings get() {
         if (instance == null)

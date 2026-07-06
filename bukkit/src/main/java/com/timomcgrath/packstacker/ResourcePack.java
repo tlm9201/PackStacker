@@ -61,4 +61,14 @@ public class ResourcePack extends AbstractResourcePack {
                     player.kick(Messaging.get("pack_req_kick"));
         }
     }
+
+    @Override
+    public void reload(UUID playerId) {
+        Player player = Bukkit.getPlayer(playerId);
+        if (player == null)
+            return;
+
+        unload(player, playerId);
+        load(player, playerId);
+    }
 }

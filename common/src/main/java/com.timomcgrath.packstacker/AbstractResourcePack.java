@@ -61,12 +61,16 @@ public abstract class AbstractResourcePack {
             return;
         }
 
-        ResourcePackRequest request = ResourcePackRequest.resourcePackRequest()
+        ResourcePackRequest.Builder requestBuilder = ResourcePackRequest.resourcePackRequest()
                 .packs(packInfo)
-                .prompt(prompt)
-                .build().callback((packId, status, aud) -> packCallback(packId, status, aud, playerId));
+                .prompt(prompt != null ? prompt : Component.text("This server has a resource pack available."));
+        if (isRequired)
+            requestBuilder.required(true);
+
+        ResourcePackRequest request = requestBuilder
+                .callback((packId, status, aud) -> packCallback(packId, status, aud, playerId))
+                .build();
         audience.sendResourcePacks(request);
-        request.callback();
     }
 
     public void unload(@NotNull Audience audience, UUID playerId) {
@@ -122,6 +126,10 @@ public abstract class AbstractResourcePack {
 
     public boolean loadOnJoin() {
         return loadOnJoin;
+    }
+
+    public PackPlugin getPackPlugin() {
+        return plugin;
     }
 
     public void setUuid(UUID uuid) {

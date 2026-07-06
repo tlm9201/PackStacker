@@ -18,13 +18,19 @@
 
 package com.timomcgrath.packstacker.listener;
 
+import com.timomcgrath.packstacker.JoinPackScheduler;
+import com.timomcgrath.packstacker.PackSettings;
+import com.timomcgrath.packstacker.PackStacker;
 import com.timomcgrath.packstacker.PackStackerUtil;
 import com.timomcgrath.packstacker.PlayerPackCache;
+import com.timomcgrath.packstacker.ProxyDetection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.UUID;
 
 public class PackListener implements Listener {
 
@@ -33,11 +39,25 @@ public class PackListener implements Listener {
     Player player = event.getPlayer();
     PlayerPackCache.getInstance().initPlayer(player.getUniqueId());
 
-    PackStackerUtil.loadMultiple(player, player.getUniqueId(), PackStackerUtil.getPacksToLoadOnJoin(), false);
+    if (!shouldSendJoinPacks())
+      return;
+
+    PackStackerUtil.loadJoinPacks(PackStacker.getPlugin(), player, player.getUniqueId());
+  }
+
+  private boolean shouldSendJoinPacks() {
+    PackSettings settings = PackSettings.get();
+    return switch (settings.backendJoinLoading) {
+      case ENABLED -> true;
+      case DISABLED -> false;
+      case AUTO -> !ProxyDetection.isBehindVelocity();
+    };
   }
 
   @EventHandler
   public void onPlayerQuit(PlayerQuitEvent event) {
-    PlayerPackCache.getInstance().removePlayer(event.getPlayer().getUniqueId());
+    UUID playerId = event.getPlayer().getUniqueId();
+    JoinPackScheduler.cancel(playerId);
+    PlayerPackCache.getInstance().removePlayer(playerId);
   }
 }

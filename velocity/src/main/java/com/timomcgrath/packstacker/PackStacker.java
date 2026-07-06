@@ -39,6 +39,8 @@ import org.slf4j.Logger;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Plugin(
@@ -164,5 +166,19 @@ public class PackStacker implements PackPlugin {
     @Override
     public void log(String string) {
         logger.info(string);
+    }
+
+    @Override
+    public Runnable scheduleDelayed(Runnable task, long delayMillis) {
+        com.velocitypowered.api.scheduler.ScheduledTask scheduledTask = server.getScheduler()
+                .buildTask(this, task)
+                .delay(delayMillis, TimeUnit.MILLISECONDS)
+                .schedule();
+        return scheduledTask::cancel;
+    }
+
+    @Override
+    public boolean isPlayerOnline(UUID playerId) {
+        return server.getPlayer(playerId).isPresent();
     }
 }

@@ -111,6 +111,19 @@ public final class PackStacker extends JavaPlugin implements PackPlugin {
         getLogger().info(string);
     }
 
+    @Override
+    public Runnable scheduleDelayed(Runnable task, long delayMillis) {
+        long ticks = Math.max(1L, (delayMillis + 49L) / 50L);
+        org.bukkit.scheduler.BukkitTask bukkitTask = Bukkit.getScheduler().runTaskLater(this, task, ticks);
+        return bukkitTask::cancel;
+    }
+
+    @Override
+    public boolean isPlayerOnline(UUID playerId) {
+        Player player = Bukkit.getPlayer(playerId);
+        return player != null && player.isOnline();
+    }
+
     @NotNull
     public static PackStacker getPlugin() {
         if (plugin == null)

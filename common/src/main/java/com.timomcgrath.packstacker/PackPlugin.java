@@ -21,6 +21,7 @@ package com.timomcgrath.packstacker;
 import net.kyori.adventure.audience.Audience;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface PackPlugin {
     void reloadMessages();
@@ -51,4 +52,8 @@ public interface PackPlugin {
     void invokeGithubRelease(AbstractResourcePack pack);
 
     void log(String string);
+
+    Runnable scheduleDelayed(Runnable task, long delayMillis);
+
+    boolean isPlayerOnline(UUID playerId);
 }

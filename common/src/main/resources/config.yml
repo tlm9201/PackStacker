@@ -1,3 +1,15 @@
 github-endpoint:
   enabled: false
   port: 25535
+
+# Controls how resource packs are sent when a player joins.
+join-packs:
+  # Debounce delay after the last connect event before sending join packs.
+  # Waits out lobby transfers and backend resource pack forwarding.
+  delay-ms: 1000
+  # Replace packs from server.properties or other plugins on the final join send.
+  replace: true
+  # Re-send if a join pack request is discarded before the player can respond.
+  max-retries: 2
+  # Backend (Paper/Spigot) join loading when using a proxy: auto skips when Velocity is detected.
+  backend-loading: auto

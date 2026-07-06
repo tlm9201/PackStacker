@@ -21,6 +21,8 @@ package com.timomcgrath.packstacker;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.resource.ResourcePackInfo;
 import net.kyori.adventure.resource.ResourcePackRequest;
+import net.kyori.adventure.resource.ResourcePackStatus;
+import net.kyori.adventure.text.Component;
 
 import java.util.*;
 
@@ -59,23 +61,111 @@ public class PackStackerUtil {
         PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(playerId);
         packs.sort(new PackStackerUtil.PackComparator());
         ArrayList<ResourcePackInfo> packInfos = new ArrayList<>();
-        packs = packs.stream().filter(pack -> !packPlayer.hasPack(pack)).toList();
+        List<AbstractResourcePack> packsToSend = packs.stream().filter(pack -> !packPlayer.hasPack(pack)).toList();
 
-        if (packs.isEmpty())
+        if (packsToSend.isEmpty())
             return;
 
-        packs.forEach(pack -> packInfos.add(pack.getPackInfo()));
-        AbstractResourcePack first = packs.get(0);
+        packsToSend.forEach(pack -> packInfos.add(pack.getPackInfo()));
+        AbstractResourcePack first = packsToSend.get(0);
+        boolean required = packsToSend.stream().anyMatch(AbstractResourcePack::isRequired);
 
-        ResourcePackRequest request = ResourcePackRequest.resourcePackRequest()
-                .packs(packInfos).prompt(first.getPrompt())
-                .build().replace(replace).callback((uuid, status, aud) -> first.packCallback(uuid, status, aud, playerId));
+        ResourcePackRequest.Builder requestBuilder = ResourcePackRequest.resourcePackRequest()
+                .packs(packInfos)
+                .prompt(resolvePrompt(first))
+                .replace(replace);
+        if (required)
+            requestBuilder.required(true);
+
+        ResourcePackRequest request = requestBuilder
+                .callback((uuid, status, aud) -> handlePackStatus(first, uuid, status, aud, playerId, packsToSend, replace))
+                .build();
         audience.sendResourcePacks(request);
+    }
+
+    private static void handlePackStatus(AbstractResourcePack callbackPack, UUID packId, ResourcePackStatus status,
+                                         Audience audience, UUID playerId, List<AbstractResourcePack> packs, boolean replace) {
+        AbstractResourcePack pack = PackCache.getInstance().get(packId);
+        if (pack == null)
+            pack = callbackPack;
+
+        if (status == ResourcePackStatus.DISCARDED && shouldRetryJoinPack(playerId, pack)) {
+            AbstractResourcePack retrySource = pack != null ? pack : callbackPack;
+            if (retrySource != null && !canBypassPacks(retrySource.getPackPlugin(), audience))
+                retryJoinPack(audience, playerId, packs, replace);
+            return;
+        }
+
+        pack.packCallback(packId, status, audience, playerId);
+    }
+
+    public static boolean shouldRetryJoinPackPublic(UUID playerId, AbstractResourcePack pack) {
+        return shouldRetryJoinPack(playerId, pack);
+    }
+
+    private static boolean shouldRetryJoinPack(UUID playerId, AbstractResourcePack pack) {
+        if (pack == null)
+            return false;
+
+        PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(playerId);
+        if (packPlayer == null || packPlayer.hasPack(pack))
+            return false;
+
+        return packPlayer.getJoinPackRetries() < PackSettings.get().joinMaxRetries;
+    }
+
+    public static void retryJoinPack(Audience audience, UUID playerId, List<AbstractResourcePack> packs, boolean replace) {
+        PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(playerId);
+        if (packPlayer == null || packs.isEmpty())
+            return;
+
+        if (canBypassPacks(packs.get(0).getPackPlugin(), audience))
+            return;
+
+        packPlayer.incrementJoinPackRetries();
+        loadMultiple(audience, playerId, packs, true);
+    }
+
+    private static Component resolvePrompt(AbstractResourcePack pack) {
+        Component prompt = pack.getPrompt();
+        if (prompt != null)
+            return prompt;
+
+        if (pack.isRequired())
+            return Component.text("This server requires a resource pack.");
+
+        return Component.text("This server has a resource pack available.");
     }
 
     /**
      * Filters both required and load_on_join packs from a given list of packs.
      */
+    public static void loadJoinPacks(PackPlugin plugin, Audience audience, UUID playerId) {
+        if (canBypassPacks(plugin, audience))
+            return;
+
+        List<AbstractResourcePack> packs = getPacksToLoadOnJoin();
+        if (packs.isEmpty())
+            return;
+
+        PackSettings settings = PackSettings.get();
+        PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(playerId);
+        if (packPlayer != null)
+            packPlayer.resetJoinPackRetries();
+
+        JoinPackScheduler.debounce(plugin, playerId, () -> {
+            if (!plugin.isPlayerOnline(playerId))
+                return;
+            if (canBypassPacks(plugin, audience))
+                return;
+            loadMultiple(audience, playerId, packs, settings.joinReplace);
+        });
+    }
+
+    public static boolean canBypassPacks(PackPlugin plugin, Audience audience) {
+        return plugin.hasPermission(audience, "pack.bypass");
+    }
+
     public static List<AbstractResourcePack> getPacksToLoadOnJoin() {
         Collection<AbstractResourcePack> cached = PackCache.getInstance().getAll();
 

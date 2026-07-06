@@ -27,13 +27,15 @@ import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.player.ResourcePackInfo;
 
+import java.util.UUID;
+
 public class PackListener {
 
     @Subscribe
     public void onPlayerJoin(ServerPostConnectEvent event) {
         Player player = event.getPlayer();
 
-        PackStackerUtil.loadMultiple(player, player.getUniqueId(), PackStackerUtil.getPacksToLoadOnJoin(), false);
+        PackStackerUtil.loadJoinPacks(PackStacker.getInstance(), player, player.getUniqueId());
     }
 
     @Subscribe
@@ -78,6 +80,8 @@ public class PackListener {
 
     @Subscribe
     public void onProxyDisconnect(DisconnectEvent event) {
-        PlayerPackCache.getInstance().removePlayer(event.getPlayer().getUniqueId());
+        UUID playerId = event.getPlayer().getUniqueId();
+        JoinPackScheduler.cancel(playerId);
+        PlayerPackCache.getInstance().removePlayer(playerId);
     }
 }
