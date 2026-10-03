@@ -58,10 +58,13 @@ public class PackStackerUtil {
         if (packs.isEmpty())
             return;
 
-        PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(playerId);
-        packs.sort(new PackStackerUtil.PackComparator());
         ArrayList<ResourcePackInfo> packInfos = new ArrayList<>();
-        List<AbstractResourcePack> packsToSend = packs.stream().filter(pack -> !packPlayer.hasPack(pack)).toList();
+        Set<String> hashes = new HashSet<>();
+        List<AbstractResourcePack> packsToSend = packs.stream()
+                .sorted(new PackComparator())
+                .filter(pack -> !pack.isApplied(audience, playerId))
+                .filter(pack -> hashes.add(pack.getHash().toLowerCase(Locale.ROOT)))
+                .toList();
 
         if (packsToSend.isEmpty())
             return;

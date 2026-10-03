@@ -4,10 +4,16 @@ repositories {
 
 dependencies {
     implementation project(':common')
-    compileOnly 'com.velocitypowered:velocity-api:3.1.1'
-    annotationProcessor 'com.velocitypowered:velocity-api:3.1.1'
+    compileOnly('com.velocitypowered:velocity-api:3.3.0-SNAPSHOT') {
+        exclude group: 'org.spongepowered'
+    }
+    annotationProcessor 'com.velocitypowered:velocity-api:3.3.0-SNAPSHOT'
     compileOnly 'net.kyori:adventure-text-minimessage:4.17.0'
     compileOnly 'net.kyori:text-api:3.0.4'
+    compileOnly 'ninja.leaping.configurate:configurate-core:3.7.1'
+    testImplementation('com.velocitypowered:velocity-api:3.3.0-SNAPSHOT') {
+        exclude group: 'org.spongepowered'
+    }
 }
 
 processResources {
@@ -19,3 +25,10 @@ processResources {
 shadowJar {
     archiveFileName = "PackStacker-Velocity-${project.ext.version}.jar"
 }
+
+tasks.register('regressionCheck', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.timomcgrath.packstacker.VelocityCompatibilityCheck'
+}
+check.dependsOn regressionCheck

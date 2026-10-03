@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -128,7 +129,11 @@ public class PackStacker implements PackPlugin {
     public void reloadPlayers() {
         server.getAllPlayers().forEach(player -> {
             PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(player.getUniqueId());
-            PackStackerUtil.loadMultiple(player, player.getUniqueId(), packPlayer.getActivePacks(), true);
+            List<AbstractResourcePack> packs = packPlayer.getActivePacks().stream()
+                    .map(pack -> PackCache.getInstance().get(pack.getName().toLowerCase()))
+                    .filter(Objects::nonNull)
+                    .toList();
+            PackStackerUtil.loadMultiple(player, player.getUniqueId(), packs, true);
         });
     }
 
@@ -160,7 +165,7 @@ public class PackStacker implements PackPlugin {
 
     private void sendPackUpdateNotification(Player player, AbstractResourcePack pack) {
         player.sendMessage(Messaging.get("pack_updated", pack.getName()));
-        player.sendMessage(Messaging.get("pack_updated_click").clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/pack update " + pack.getName())));
+        player.sendMessage(Messaging.get("pack_updated_click").clickEvent(ClickEvent.runCommand("/pack update " + pack.getName())));
     }
 
     @Override

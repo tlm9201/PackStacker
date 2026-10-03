@@ -25,11 +25,24 @@ import net.kyori.adventure.resource.ResourcePackStatus;
 import net.kyori.adventure.text.Component;
 
 import java.util.Optional;
+import java.util.HexFormat;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public class ResourcePack extends AbstractResourcePack {
     public ResourcePack(PackPlugin plugin, String name, String hash, Component prompt, String url, byte priority, boolean isRequired, boolean loadOnJoin) {
         super(name, hash, prompt, url, priority, isRequired, loadOnJoin, plugin);
+    }
+
+    @Override
+    public boolean isApplied(Audience audience, UUID playerId) {
+        if (!(audience instanceof Player player))
+            return super.isApplied(audience, playerId);
+
+        // Velocity rejects duplicate hashes, even when the pack UUID or name differs.
+        return Stream.concat(player.getAppliedResourcePacks().stream(), player.getPendingResourcePacks().stream())
+                .anyMatch(pack -> pack.getHash() != null
+                        && getHash().equalsIgnoreCase(HexFormat.of().formatHex(pack.getHash())));
     }
 
     @Override

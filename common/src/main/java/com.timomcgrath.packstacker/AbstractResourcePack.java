@@ -54,9 +54,7 @@ public abstract class AbstractResourcePack {
     }
 
     public void load(@NotNull Audience audience, UUID playerId) {
-        PackPlayer packPlayer = PlayerPackCache.getInstance().getPlayer(playerId);
-
-        if (packPlayer.hasPack(this)) {
+        if (isApplied(audience, playerId)) {
             Messaging.sendMsg(audience, "pack_already_loaded", name);
             return;
         }
@@ -87,6 +85,11 @@ public abstract class AbstractResourcePack {
     public abstract void packCallback(UUID packId, ResourcePackStatus status, Audience audience, UUID playerId);
 
     public abstract void reload(UUID uuid);
+
+    public boolean isApplied(Audience audience, UUID playerId) {
+        PackPlayer player = PlayerPackCache.getInstance().getPlayer(playerId);
+        return player != null && player.hasPack(this);
+    }
 
     public String getHash() {
         return hash;
