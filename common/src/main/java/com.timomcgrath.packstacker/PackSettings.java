@@ -27,6 +27,7 @@ public class PackSettings {
     public int githubPort = 3434;
     public boolean githubEnabled = false;
     public int joinDelayMs = 1000;
+    public int skinRefreshDelayMs = 5000;
     public boolean joinReplace = true;
     public int joinMaxRetries = 2;
     public BackendJoinLoading backendJoinLoading = BackendJoinLoading.AUTO;
@@ -44,6 +45,7 @@ public class PackSettings {
 
         ConfigurationNode joinPacks = root.getNode("join-packs");
         this.joinDelayMs = joinPacks.getNode("delay-ms").getInt(joinDelayMs);
+        this.skinRefreshDelayMs = joinPacks.getNode("skin-refresh-delay-ms").getInt(skinRefreshDelayMs);
         this.joinReplace = joinPacks.getNode("replace").getBoolean(joinReplace);
         this.joinMaxRetries = joinPacks.getNode("max-retries").getInt(joinMaxRetries);
         String backendLoading = joinPacks.getNode("backend-loading").getString("auto");

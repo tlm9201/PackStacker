@@ -143,6 +143,14 @@ public class PackStackerUtil {
     /**
      * Filters both required and load_on_join packs from a given list of packs.
      */
+    public static boolean joinPacksApplied(Audience audience, UUID playerId) {
+        List<AbstractResourcePack> packs = getPacksToLoadOnJoin();
+        if (packs.isEmpty())
+            return false;
+
+        return packs.stream().allMatch(pack -> pack.isApplied(audience, playerId));
+    }
+
     public static void loadJoinPacks(PackPlugin plugin, Audience audience, UUID playerId) {
         if (canBypassPacks(plugin, audience))
             return;

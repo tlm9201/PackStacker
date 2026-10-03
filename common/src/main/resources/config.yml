@@ -7,6 +7,9 @@ join-packs:
   # Debounce delay after the last connect event before sending join packs.
   # Waits out lobby transfers and backend resource pack forwarding.
   delay-ms: 1000
+  # Reapply the player's current skin this long after a pack finishes loading.
+  # The client clears skins while it applies a pack. 0 disables the reapply.
+  skin-refresh-delay-ms: 5000
   # Replace packs from server.properties or other plugins on the final join send.
   replace: true
   # Re-send if a join pack request is discarded before the player can respond.

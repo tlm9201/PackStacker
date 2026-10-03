@@ -59,8 +59,10 @@ public class ResourcePack extends AbstractResourcePack {
 
         switch (status) {
             case SUCCESSFULLY_LOADED:
-                packPlayer.addPack(pack);
+                if (packPlayer != null)
+                    packPlayer.addPack(pack);
                 audience.sendMessage(Messaging.get("pack_successfully_loaded", pack.getName()));
+                SkinRefresh.schedule(player);
                 break;
             case ACCEPTED:
                 Messaging.sendMsg(audience, "pack_accepted", pack.getName());
@@ -73,11 +75,12 @@ public class ResourcePack extends AbstractResourcePack {
                 audience.sendMessage(Messaging.get("pack_failed_load", pack.getName(), status.name()));
                 PackStacker.getInstance().getLogger().info(player.getUniqueId() + " " + player.hasPermission("pack.bypass"));
 
-                if (player.hasPermission("pack.bypass"))
-                    break;
-
-                if (pack.isRequired())
+                if (!player.hasPermission("pack.bypass") && pack.isRequired()) {
                     player.disconnect(Messaging.get("pack_req_kick"));
+                    break;
+                }
+
+                SkinRefresh.schedule(player);
         }
     }
 

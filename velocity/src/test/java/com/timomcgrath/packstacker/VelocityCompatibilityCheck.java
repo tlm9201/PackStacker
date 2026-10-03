@@ -90,6 +90,7 @@ public class VelocityCompatibilityCheck {
         check(sent.size() == 3, "Single-pack loads must skip pending packs");
 
         PackStacker plugin = new PackStacker(null, LoggerFactory.getLogger("compatibility-check"), Path.of("."));
+        SkinRefresh.schedule(player);
         var notification = PackStacker.class.getDeclaredMethod("sendPackUpdateNotification", Player.class, AbstractResourcePack.class);
         notification.setAccessible(true);
         notification.invoke(plugin, player, pack);

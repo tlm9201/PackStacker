@@ -34,8 +34,14 @@ public class PackListener {
     @Subscribe
     public void onPlayerJoin(ServerPostConnectEvent event) {
         Player player = event.getPlayer();
+        PackPlugin plugin = PackStacker.getInstance();
 
-        PackStackerUtil.loadJoinPacks(PackStacker.getInstance(), player, player.getUniqueId());
+        PackStackerUtil.loadJoinPacks(plugin, player, player.getUniqueId());
+        // The pack is sent once, on the first backend. Later backends still need
+        // the skin message, and only a backend running SkinsRestorer can deliver it.
+        if (!PackStackerUtil.canBypassPacks(plugin, player)
+                && PackStackerUtil.joinPacksApplied(player, player.getUniqueId()))
+            SkinRefresh.schedule(player);
     }
 
     @Subscribe
@@ -59,7 +65,9 @@ public class PackListener {
 
         switch (status) {
             case SUCCESSFUL:
-                packPlayer.addPack(pack);
+                if (packPlayer != null)
+                    packPlayer.addPack(pack);
+                SkinRefresh.schedule(player);
                 Messaging.sendMsg(player, "pack_successfully_loaded", pack.getName());
                 break;
             case ACCEPTED:
@@ -70,6 +78,8 @@ public class PackListener {
                 Messaging.sendMsg(player, "pack_failed_load", pack.getName(), status.name());
                 if (pack.isRequired() && !player.hasPermission("pack.bypass"))
                     player.disconnect(Messaging.get("pack_req_kick"));
+                else
+                    SkinRefresh.schedule(player);
         }
     }
 
@@ -82,6 +92,7 @@ public class PackListener {
     public void onProxyDisconnect(DisconnectEvent event) {
         UUID playerId = event.getPlayer().getUniqueId();
         JoinPackScheduler.cancel(playerId);
+        SkinRefresh.cancel(playerId);
         PlayerPackCache.getInstance().removePlayer(playerId);
     }
 }
